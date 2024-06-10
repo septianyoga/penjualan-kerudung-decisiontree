@@ -16,8 +16,13 @@ def user_not_authenticated(user):
 @user_passes_test(user_not_authenticated, login_url='dashboard')
 def login_v(request):
     if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        # Lakukan validasi input
+        if not username or not password:
+            return render(request, 'auth/login.html', {'error': 'Please enter both username and password'})
+
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
